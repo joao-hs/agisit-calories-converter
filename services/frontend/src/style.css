@@ -1,0 +1,76 @@
+* {
+  font-family: "Text Me One", sans-serif;
+}
+
+body {
+  margin: 10px auto;
+  width: 400px;
+  text-align: center;
+  background-color: #ebf5f4;
+}
+#scale {
+  width: 100%;
+}
+h1 {
+  font-size: 30pt;
+}
+
+#inputBox {
+  font-size: 16pt;
+  padding: 10px 10px;
+  margin-bottom: 5px;
+}
+
+/*the container must be positioned relative:*/
+.custom-select {
+  font-family: "Text Me One", sans-serif;
+  font-size: 14pt;
+}
+
+
+.space {
+  margin-bottom: 1em;
+}
+
+.form-container {
+  display: flex;
+  align-items: center; /* Vertically align the label and form */
+  gap: 10px; /* Add space between the label and form */
+}
+
+.weight-label {
+  font-size: 1.2rem; /* Adjust the font size as needed */
+}
+
+.small-input {
+  width: 98px; /* Set the desired width */
+  padding: 5px; /* Adjust padding for better appearance */
+  font-size: 1rem; /* You can also adjust the font size if needed */
+}
+
+.input-container {
+  display: flex;
+  justify-content: center; /* Center the label and input/select */
+  align-items: center; /* Vertically align label and input/select */
+  gap: 10px; /* Add space between the label and the input/select */
+  margin-bottom: 1em; /* Add some margin between sections */
+}
+
+
+.button-container {
+  margin-top: 10px;
+}
+
+#convert-button {
+  font-size: 1.5rem; /* Adjust the size of the button text */
+  padding: 10px 20px; /* Adjust padding for a larger button */
+  background-color: #445d72; /* Set button color */
+  color: white; /* Set text color */
+  border: none; /* Remove borders */
+  border-radius: 5px; /* Add rounded corners */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+#convert-button:hover {
+  background-color: #3c4f65; /* Darken the button when hovered */
+}

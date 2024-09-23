@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CodePen - Weight Converter</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Text+Me+One"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- partial:index.partial.html -->
+    <h1>Calories Converter</h1>
+
+    <div class="input-container">
+      <label style="font-size: 1.2rem">Select Food:</label>
+      <select name="foodSelector" class="custom-select" id="foodSelector">
+        <option value="chicken" id="toOunces">Chicken</option>
+        <option value="rice" id="toKilogram">Rice</option>
+        <option value="black-beans" id="toGram">Black Beans</option>
+        <option value="salmon" id="toGram">Salmon</option>
+        <option value="avocado" id="toGram">Avocado</option>
+      </select>
+    </div>
+
+    <div class="input-container">
+      <label class="weight-label">Enter weight:</label>
+      <form id="main-input-form" autocomplete="off">
+        <input
+          type="text"
+          placeholder="Grams"
+          name="lbsInput"
+          id="inputBox"
+          class="small-input"
+        />
+      </form>
+    </div>
+
+    <!-- Add Convert Button here -->
+    <div class="button-container">
+      <button id="convert-button" type="button">Convert</button>
+    </div>
+
+    <div id="display-area">
+      <h1>0 Calories</h1>
+    </div>
+    <svg id="scale" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 289 314">
+      <defs>
+        <style>
+          .cls-1 {
+            fill: #4d5359;
+          }
+          .cls-1a {
+            fill: #e88b5b;
+          }
+          .cls-1b {
+            fill: #f3b48b;
+          }
+          .cls-4 {
+            fill: #445d72;
+          }
+          .cls-2 {
+            fill: #258d4b;
+          }
+          .cls-2a {
+            fill: #96c0a5;
+          }
+        </style>
+      </defs>
+      <title>scale</title>
+      <g id="weight-scale">
+        <rect class="cls-1" width="289" height="16" rx="8" ry="8" />
+        <path
+          d="M269.86 55H30.26a2 2 0 0 1-1.77-1.06L13.84 26.47a1 1 0 0 1 .88-1.47h270.67a1 1 0 0 1 .88 1.47l-14.65 27.47a2 2 0 0 1-1.76 1.06z"
+          transform="translate(-5.56 -9)"
+          fill="#c3d0df"
+        />
+      </g>
+      <path id="scale-neck" class="cls-1" d="M130.5 46h28v28h-28z" />
+      <!-- Main-body-light   -->
+      <path
+        id="main-body-light"
+        class="main-body-light"
+        d="M262.2 167c-3.11-51.15-45.88-92-97.74-92h-30.15c-51.85 0-94.62 40.85-97.73 92a11.58 11.58 0 0 0-.19 2.05V298a12 12 0 0 0 12 12h202a12 12 0 0 0 12-12V169a11.58 11.58 0 0 0-.19-2z"
+        transform="translate(-5.56 -9)"
+        fill="#7298c5"
+      />
+      <!--Main Body Dark    -->
+      <path
+        id="main-body-dark"
+        class="cls-4 main-body-dark"
+        d="M263.22 166c-2.8-51.15-41.22-92-87.79-92h-27.08c-46.58 0-85 40.85-87.79 91.95a12.6 12.6 0 0 0-.17 2.05v129c0 6.6 4.85 12 10.78 12h181.44c5.93 0 10.78-5.4 10.78-12V168a13.83 13.83 0 0 0-.17-2z"
+        transform="translate(-5.56 -9)"
+      />
+      <circle
+        cx="144.5"
+        cy="171.25"
+        r="80"
+        fill="#fff"
+        stroke="#515151"
+        stroke-miterlimit="10"
+        stroke-width="4"
+      />
+      <circle cx="144.5" cy="171.25" r="27" fill="#6080a6" />
+      <rect
+        id="clock-hand"
+        x="141.5"
+        y="168"
+        width="6"
+        height="59"
+        rx="3"
+        ry="3"
+        fill="#ef1d63"
+      />
+      <!--bottom of scale  -->
+      <rect
+        id="bottom-piece"
+        class="cls-4"
+        x="19.83"
+        y="290"
+        width="247"
+        height="24"
+        rx="12"
+        ry="12"
+      />
+    </svg>
+    <!-- partial -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
