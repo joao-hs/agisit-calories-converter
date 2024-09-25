@@ -1,3 +1,5 @@
+import json
+import math
 from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -22,7 +24,7 @@ def get_food(name):
         cursor.execute('SELECT * FROM foods WHERE name = %s;', (name,))
         food = cursor.fetchone()
         if food:
-            return jsonify({'name': food['name'], 'calories_per_100g': food['calories_per_100g']})
+            return jsonify({'name': food['name'], 'calories_per_100g': str(food['calories_per_100g'])})
         else:
             return jsonify({'error': 'Food not found'}), 404
     except:
@@ -47,7 +49,7 @@ def get_average_calories(category_name):
 
         result = cursor.fetchone()
         if result and result[0] is not None:
-            return jsonify({'category': category_name, 'average_calories': result['average_calories']})
+            return jsonify({'category': category_name, 'average_calories': str(math.ceil(result['average_calories']))})
         else:
             return jsonify({'error': 'Category not found'}), 404
     except:
@@ -68,7 +70,7 @@ def add_log():
     cursor = connection.cursor()
     
     try:
-        cursor.execute("INSERT INTO logs (log) VALUES (%s);", (log,))
+        cursor.execute("INSERT INTO logs (log) VALUES (%s);", (json.dumps(log),))
         connection.commit()
         return jsonify({'status': 'Log added'}), 201
     except:

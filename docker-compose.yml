@@ -26,5 +26,65 @@ services:
     depends_on:
       - db
 
+  be_carbs:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+      args:
+        - MICROSERVICE=carbs
+    container_name: be-carbs
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      STORAGE_DEVICE_URL: http://storage_device:5000
+    depends_on:
+      - storage_device
+  
+  be_dairy:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+      args:
+        - MICROSERVICE=dairy
+    container_name: be-dairy
+    restart: always
+    ports:
+      - "8001:80"
+    environment:
+      STORAGE_DEVICE_URL: http://storage_device:5000
+    depends_on:
+      - storage_device
+
+  be_meats:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+      args:
+        - MICROSERVICE=meats
+    container_name: be-meats
+    restart: always
+    ports:
+      - "8002:80"
+    environment:
+      STORAGE_DEVICE_URL: http://storage_device:5000
+    depends_on:
+      - storage_device
+  
+  be_vegetables:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+      args:
+        - MICROSERVICE=vegetables
+    container_name: be-vegetables
+    restart: always
+    ports:
+      - "8003:80"
+    environment:
+      STORAGE_DEVICE_URL: http://storage_device:5000
+    depends_on:
+      - storage_device
+
 volumes:
   db-data:
