@@ -1,19 +1,14 @@
 from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
 
 # Connect to PostgreSQL
 def get_db_connection():
-    load_dotenv()
     connection = psycopg2.connect(
-        host="localhost",
-        database=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
+        os.getenv('DB_URL')
     )
     return connection
 
@@ -27,7 +22,7 @@ def get_food(name):
         cursor.execute('SELECT * FROM foods WHERE name = %s;', (name,))
         food = cursor.fetchone()
         if food:
-            return jsonify({'name': food[1], 'calories_per_100g': food[2]})
+            return jsonify({'name': food['name'], 'calories_per_100g': food['calories_per_100g']})
         else:
             return jsonify({'error': 'Food not found'}), 404
     except:
@@ -52,7 +47,7 @@ def get_average_calories(category_name):
 
         result = cursor.fetchone()
         if result and result[0] is not None:
-            return jsonify({'category': category_name, 'average_calories': result[0]})
+            return jsonify({'category': category_name, 'average_calories': result['average_calories']})
         else:
             return jsonify({'error': 'Category not found'}), 404
     except:
@@ -73,7 +68,7 @@ def add_log():
     cursor = connection.cursor()
     
     try:
-        cursor.execute('INSERT INTO logs (log) VALUES (%s);', (log,))
+        cursor.execute("INSERT INTO logs (log) VALUES (%s);", (log,))
         connection.commit()
         return jsonify({'status': 'Log added'}), 201
     except:
