@@ -1,7 +1,8 @@
-CREATE TABLE IF NOT EXISTS foods  (
+CREATE TABLE IF NOT EXISTS foods (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    calories_per_100g INTEGER NOT NULL
+    name VARCHAR(40) NOT NULL,
+    calories_per_100g INTEGER NOT NULL,
+    category VARCHAR(40)
 );
 
 CREATE TABLE IF NOT EXISTS logs (
