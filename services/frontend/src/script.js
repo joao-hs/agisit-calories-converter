@@ -1,10 +1,10 @@
-(function($) {
+(function ($) {
   function animateScale() {
     // for Tween Timeline
     let weightScale = $("#weight-scale"),
-        clockHand = $("#clock-hand"),
-        scaleNeck = $("#scale-neck"),
-        tl = new TimelineLite();
+      clockHand = $("#clock-hand"),
+      scaleNeck = $("#scale-neck"),
+      tl = new TimelineLite();
 
     // Adding Tweens
     tl.from(weightScale, 1.3, { ease: Bounce.easeOut, y: 15 });
@@ -26,47 +26,45 @@
     let value = dropDownValue.options[dropDownValue.selectedIndex].value;
     let displayArea = document.getElementById("display-area");
 
-    if (value === "chicken") {
-      let conversionToOunces = conversionValue * 16;
-      displayArea.innerHTML = `<h1>${conversionToOunces.toFixed(2)} Calories</h1>`;
-    } else if (value === "rice") {
-      let conversionToKilograms = conversionValue / 1000; // Convert grams to kilograms
-      displayArea.innerHTML = `<h1>${conversionToKilograms.toFixed(2)} Calories</h1>`;
-    } else {
-      let conversionToGrams = conversionValue * 1; // Assuming the input is in grams already
-      displayArea.innerHTML = `<h1>${conversionToGrams.toFixed(2)} Calories</h1>`;
-    }
-
+    // GET http://localhost/chicken?weight=conversionValue
+    calories = fetch(
+      "/" + value + // Remove the trailing slash
+        "?" +
+        new URLSearchParams({
+          weight: conversionValue,
+        }),
+      {
+        method: "GET",
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json(); // Assuming backend returns JSON
+      })
+      .then((data) => {
+        console.log("Ping response:", data); // Log response for testing
+        displayArea.innerHTML = `<h1>${data} Calories</h1>`;
+      })
+      .catch((error) => {
+        console.error("Error fetching /chicken/:", error);
+      });
+    
   }
 
   // Trigger conversion on form submit (Enter key)
-  document.getElementById("main-input-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    document.getElementById("convert-button").click(); // Trigger Convert button click on Enter
-  });
+  document
+    .getElementById("main-input-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("convert-button").click(); // Trigger Convert button click on Enter
+    });
 
   // Trigger conversion on Convert button click
-  document.getElementById("convert-button").addEventListener("click", handleConversion);
-
-  // Color change logic when selecting food type
   document
-    .getElementById("foodSelector")
-    .addEventListener("change", function(e) {
-      if (e.target.value === "rice") {
-        // Change color for rice
-        document.getElementById("bottom-piece").className.baseVal = "cls-1a";
-        document.getElementById("main-body-dark").className.baseVal = "cls-1a";
-        document.getElementById("main-body-light").className.baseVal = "cls-1b";
-      } else if (e.target.value === "chicken") {
-        // Change color for chicken
-        document.getElementById("bottom-piece").className.baseVal = "cls-1";
-        document.getElementById("main-body-dark").className.baseVal = "cls-1";
-        document.getElementById("main-body-light").className.baseVal = "cls-4a";
-      } else {
-        // Change color for other options
-        document.getElementById("bottom-piece").className.baseVal = "cls-2";
-        document.getElementById("main-body-dark").className.baseVal = "cls-2";
-        document.getElementById("main-body-light").className.baseVal = "cls-2a";
-      }
-    });
+    .getElementById("convert-button")
+    .addEventListener("click", handleConversion);
+
+  
 })(jQuery);
