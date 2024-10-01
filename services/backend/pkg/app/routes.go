@@ -24,12 +24,12 @@ func (router *router) Route() {
 
 func (router *router) computeCalories(w http.ResponseWriter, r *http.Request) {
 	// get header
-	reqID := r.Header.Get("Request-Id")
-	if reqID == "" {
-		logger.Error("Request-Id header is required")
-		http.Error(w, "Request-Id header is required", http.StatusBadRequest)
-		return
-	}
+	// reqID := r.Header.Get("Request-Id")
+	// if reqID == "" {
+	// 	logger.Error(export PATH=$PATH:/usr/local/go/bin"Request-Id header is required")
+	// 	http.Error(w, "Request-Id header is required", http.StatusBadRequest)
+	// 	return
+	// }
 
 	foodID := r.URL.Path[1:] // after the "/"
 	if foodID == "" {
@@ -56,5 +56,5 @@ func (router *router) computeCalories(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(strconv.Itoa(calories)))
-	logger.Infof("Request-Id: %s, Microservice: %s, Food: %s, Weight: %d, Calories: %d", reqID, router.app.Category(), foodID, weight, calories)
+	logger.Infof("Microservice: %s, Food: %s, Weight: %d, Calories: %d", router.app.Category(), foodID, weight, calories)
 }
