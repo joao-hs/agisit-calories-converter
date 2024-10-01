@@ -38,7 +38,7 @@ def get_food(name):
 @app.route('/category/<category_name>', methods=['GET'])
 def get_average_calories(category_name):
     connection = get_db_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
 
     try:
         cursor.execute("""
@@ -48,7 +48,7 @@ def get_average_calories(category_name):
         """, (category_name,))
 
         result = cursor.fetchone()
-        if result and result[0] is not None:
+        if result and result['average_calories'] is not None:
             return jsonify({'category': category_name, 'average_calories': str(math.ceil(result['average_calories']))})
         else:
             return jsonify({'error': 'Category not found'}), 404

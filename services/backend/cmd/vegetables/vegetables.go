@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const categoryName = "vegetables"
+const categoryName = "vegetable"
 
 type vegetablesCategory struct {
 	storage storage.StorageDevice
