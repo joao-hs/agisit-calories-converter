@@ -1,0 +1,34 @@
+# file: inventory.ini
+
+# Masters
+%{ for master in masters ~}
+${ master.id } ansible_host=${ master.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+
+# Workers
+%{ for worker in workers ~}
+${ worker.id } ansible_host=${ worker.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+
+# The local deployment host VM
+[osmgmt]
+localhost           ansible_connection=local
+
+# Contains the web servers
+[workers]
+%{ for worker in workers ~}
+${ worker.id }
+%{ endfor ~}
+
+[master]
+%{ for master in masters ~}
+${ master.id }
+%{ endfor ~}
+
+[targets]
+%{ for master in masters ~}
+${ master.id }
+%{ endfor ~}
+%{ for worker in workers ~}
+${ worker.id }
+%{ endfor ~}
