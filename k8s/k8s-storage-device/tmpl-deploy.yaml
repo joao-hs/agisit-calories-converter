@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-device-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-device-pod
+  template:
+    metadata:
+      labels:
+        app: storage-device-pod
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: storage-device
+        image: CONTAINER_REGISTRY_PREFIX:storage-device_latest
+        imagePullPolicy: Always
+        env:
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: dbname
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: dbuser
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: dbpassword
+        - name: DB_URL
+          value: postgresql://$(DB_USER):$(DB_PASSWORD)@db.default.svc.cluster.local:5432/$(DB_NAME)
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 5000

@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-carbs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-carbs-pod
+  template:
+    metadata:
+      labels:
+        app: be-carbs-pod
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: be-carbs
+        image: CONTAINER_REGISTRY_PREFIX:be-carbs_latest
+        imagePullPolicy: Always
+        env:
+        - name: STORAGE_DEVICE_URL
+          value: http://storage-device.default.svc.cluster.local:5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-dairy-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-dairy-pod
+  template:
+    metadata:
+      labels:
+        app: be-dairy-pod
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: be-dairy
+        image: CONTAINER_REGISTRY_PREFIX:be-dairy_latest
+        imagePullPolicy: Always
+        env:
+        - name: STORAGE_DEVICE_URL
+          value: http://storage-device.default.svc.cluster.local:5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-meats-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-meats-pod
+  template:
+    metadata:
+      labels:
+        app: be-meats-pod
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: be-meats
+        image: CONTAINER_REGISTRY_PREFIX:be-meats_latest
+        imagePullPolicy: Always
+        env:
+        - name: STORAGE_DEVICE_URL
+          value: http://storage-device.default.svc.cluster.local:5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-vegetables-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-vegetables-pod
+  template:
+    metadata:
+      labels:
+        app: be-vegetables-pod
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: be-vegetables
+        image: CONTAINER_REGISTRY_PREFIX:be-vegetables_latest
+        imagePullPolicy: Always
+        env:
+        - name: STORAGE_DEVICE_URL
+          value: http://storage-device.default.svc.cluster.local:5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80

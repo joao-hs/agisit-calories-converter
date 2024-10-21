@@ -1,0 +1,79 @@
+---
+- name: Deploy the database on Kubernetes Cluster
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy k8s deployment specification from ansible host to the master nodes.
+      copy:
+        src: k8s-db/
+        dest: /home/ubuntu/db-manifest/
+        mode: 0777
+    - name: Copy database initialization scripts from ansible host to the master nodes.
+      copy:
+        src: ../db/
+        dest: /home/ubuntu/db-init/
+        mode: 0777
+    - name: Create a ConfigMap for the database initialization scripts
+      shell: sudo kubectl get configmap db-init-scripts || sudo kubectl create configmap db-init-scripts --from-file=/home/ubuntu/db-init/
+    - name: Create a PersistentVolume for the database
+      shell: sudo kubectl apply -f /home/ubuntu/db-manifest/pv.yaml
+    - name: Create a PersistentVolumeClaim for the database
+      shell: sudo kubectl apply -f /home/ubuntu/db-manifest/pvc.yaml
+    - name: Create a Deployment for the database
+      shell: sudo kubectl apply -f /home/ubuntu/db-manifest/deploy.yaml
+    - name: Create a Service for the database
+      shell: sudo kubectl apply -f /home/ubuntu/db-manifest/service.yaml
+    - name: Wait for the database to be ready
+      shell: sudo kubectl wait --for=condition=available --timeout=30s deployment/db-deployment
+    - name: Create a Job to initialize the database
+      shell: sudo kubectl apply -f /home/ubuntu/db-manifest/init-job.yaml
+
+- name: Deploy the storage device on Kubernetes Cluster
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy k8s deployment specification from ansible host to the master nodes.
+      copy:
+        src: k8s-storage-device/
+        dest: /home/ubuntu/storage-device-manifest/
+        mode: 0777
+    - name: Create a Deployment for the storage device
+      shell: sudo kubectl apply -f /home/ubuntu/storage-device-manifest/generated/deploy.yaml
+    - name: Create a Service for the storage device
+      shell: sudo kubectl apply -f /home/ubuntu/storage-device-manifest/service.yaml
+
+- name: Deploy the backend services on Kubernetes Cluster
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy k8s deployment specification from ansible host to the master nodes.
+      copy:
+        src: k8s-be/
+        dest: /home/ubuntu/be-manifest/
+        mode: 0777
+    - name: Create Deployments for the backend services
+      shell: sudo kubectl apply -f /home/ubuntu/be-manifest/generated/deploy.yaml
+    - name: Create Services for the backend services
+      shell: sudo kubectl apply -f /home/ubuntu/be-manifest/service.yaml
+
+- name: Deploy the frontend service on Kubernetes Cluster
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy k8s deployment specification from ansbile host to the master nodes.
+      copy:
+        src: k8s-fe/
+        dest: /home/ubuntu/fe-manifest/
+        mode: 0777
+    - name: Create a Deployment for the frontend service
+      shell: sudo kubectl apply -f /home/ubuntu/fe-manifest/generated/deploy.yaml
+    - name: Create a Service for the fronend service
+      shell: sudo kubectl apply -f /home/ubuntu/fe-manifest/service.yaml

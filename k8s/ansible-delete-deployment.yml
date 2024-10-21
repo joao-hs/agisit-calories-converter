@@ -1,0 +1,46 @@
+---
+- name: "Delete the database deployment on Kubernetes Cluster"
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Delete deployment
+      shell: sudo kubectl delete -f /home/ubuntu/db-manifest/
+    - name: Delete ConfigMap
+      shell: sudo kubectl delete configmap db-init-scripts
+    - name: Delete source files
+      shell: sudo rm -rf /home/ubuntu/db-manifest/ /home/ubuntu/db-init/
+
+- name: "Delete the storage device deployment on Kubernetes Cluster"
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Delete deployment
+      shell: sudo kubectl delete -f /home/ubuntu/storage-device-manifest/
+    - name: Delete source files
+      shell: sudo rm -rf /home/ubuntu/storage-device-manifest/
+
+- name: "Delete the backend services deployment on Kubernetes Cluster"
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Delete deployment
+      shell: sudo kubectl delete -f /home/ubuntu/be-manifest/
+    - name: Delete source files
+      shell: sudo rm -rf /home/ubuntu/be-manifest/
+
+- name: "Delete the frontend service deployment on Kubernetes Cluster"
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Delete deployment
+      shell: sudo kubectl delete -f /home/ubuntu/fe-manifest/
+    - name: Delete source files
+      shell: sudo rm -rf /home/ubuntu/fe-manifest/

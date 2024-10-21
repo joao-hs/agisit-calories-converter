@@ -10,4 +10,6 @@ k8s/secrets/*
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+.terraform.tfstate.lock.info
 inventory.ini
+generated

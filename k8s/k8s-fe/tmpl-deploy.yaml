@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fe-pod
+  template:
+    metadata:
+      labels:
+        app: fe-pod
+    spec:
+      containers:
+      - name: nginx-frontend
+        image: CONTAINER_REGISTRY_PREFIX:fe_latest
+        imagePullPolicy: Always
+        env:
+        - name: BE_CARBS_URL
+          value: http://be-carbs.default.svc.cluster.local
+        - name: BE_DAIRY_URL
+          value: http://be-dairy.default.svc.cluster.local
+        - name: BE_MEATS_URL
+          value: http://be-meats.default.svc.cluster.local
+        - name: BE_VEGETABLES_URL
+          value: http://be-vegetables.default.svc.cluster.local
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80

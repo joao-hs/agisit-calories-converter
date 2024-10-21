@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: be-carbs
+spec:
+  selector:
+    app: be-carbs-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: be-dairy
+spec:
+  selector:
+    app: be-dairy-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: be-meats
+spec:
+  selector:
+    app: be-meats-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: be-vegetables
+spec:
+  selector:
+    app: be-vegetables-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

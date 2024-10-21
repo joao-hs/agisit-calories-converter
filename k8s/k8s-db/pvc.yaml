@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-volume-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual # same as storageClassName in k8s-db-pv.yaml
+  accessModes:
+    - ReadWriteMany # same as accessModes in k8s-db-pv.yaml
+  resources:
+    requests:
+      storage: 1Gi # maximum size of the volume
