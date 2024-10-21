@@ -36,8 +36,8 @@ Vagrant.configure("2") do |config|
       vb.cpus = 1
     end # of vb
     # Shared folders
-    source_dir = "../k8s"
-    target_dir = "/home/vagrant/k8s"
+    source_dir = "../"
+    target_dir = "/home/vagrant/agisit24-g10"
     if Vagrant::Util::Platform.windows? then
       # Configuration SPECIFIC for Windows 10 hosts
       mgvb.vm.synced_folder source_dir, target_dir,
