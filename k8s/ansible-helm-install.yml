@@ -1,0 +1,23 @@
+---
+- name: Install Helm on Kubernetes Master Nodes
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Download Helm and run the installation script
+      shell: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Reconfigure permissions
+      shell: |
+        chmod g-r /root/.kube/config
+        chmod o-r /root/.kube/config
+
+    - name: Verify Helm installation
+      command: helm version
+      register: helm_version
+
+    - name: Print Helm version
+      debug:
+        msg: "Helm version installed: {{ helm_version.stdout }}"
