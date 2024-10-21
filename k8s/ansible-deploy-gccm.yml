@@ -1,0 +1,14 @@
+---
+- name: Deploy cloud controller manager
+  hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy k8s deployment specification from ansible host to the master nodes.
+      copy:
+        src: k8s-gccm/
+        dest: /home/ubuntu/gccm-manifest/
+        mode: 0777
+    - name: Create a Deployment for the cloud controller manager
+      shell: sudo kubectl apply -f /home/ubuntu/gccm-manifest/gccm.yaml
