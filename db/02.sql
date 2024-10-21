@@ -1,3 +1,4 @@
+DELETE FROM foods;
 INSERT INTO foods (name, calories_per_100g, category) VALUES
     ('rice', 130, 'carb'),
     ('pasta', 158, 'carb'),
