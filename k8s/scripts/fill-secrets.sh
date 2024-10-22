@@ -7,8 +7,18 @@ SCRIPT_DIR=$(dirname "$0")
 TMPL_FILE=$(realpath "$SCRIPT_DIR/../templates/k8s-secrets.yaml")
 OUT_FILE=$(realpath "$SCRIPT_DIR/../secrets/k8s-secrets.yaml")
 
-read -p "Enter the database name: " dbname
-read -p "Enter the database user: " dbuser
+if [ -z "DB_NAME" ]; then
+    read -p "Enter the database name: " dbname
+else
+    dbname=$DB_NAME
+fi
+
+if [ -z "DB_USER" ]; then
+    read -p "Enter the database user: " dbuser
+else
+    dbuser=$DB_USER
+fi
+
 dbpassword=$(openssl rand -base64 12)
 # harborpassword=$(openssl rand -base64 12)
 # harborsecretkey=$(openssl rand -base64 12)

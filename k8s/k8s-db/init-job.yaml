@@ -39,4 +39,4 @@ spec:
       - name: script-volume
         configMap:
           name: db-init-scripts
-  backoffLimit: 4  # Retries in case the job fails
+  # backoffLimit: 4  # Retries in case the job fails

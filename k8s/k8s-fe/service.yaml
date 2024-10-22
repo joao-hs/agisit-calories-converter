@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fe-service
+  name: fe
 spec:
   selector:
     app: fe-pod
