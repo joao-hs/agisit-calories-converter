@@ -1,0 +1,161 @@
+---
+- name: "Deploy Database Docker Container"
+  hosts: db
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Database"
+      shell: "docker pull postgres:14"
+    - name: "Copy Database Initialization Files"
+      copy:
+        src: "../db/"
+        dest: "/home/ubuntu/db"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+    - name: "Create Directory for Database Data"
+      file:
+        path: "/home/ubuntu/db-data"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+    - name: "Run Docker Container for Database"
+      shell: |
+        docker run -d \
+          --name postgres-db \
+          --restart always \
+          -e POSTGRES_USER={{ DB_USER }} \
+          -e POSTGRES_PASSWORD={{ DB_PASSWORD }} \
+          -e POSTGRES_DB={{ DB_NAME }} \
+          -p 5432:5432 \
+          -v /home/ubuntu/db-data/:/var/lib/postgresql/data/ \
+          -v /home/ubuntu/db/:/docker-entrypoint-initdb.d/ \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          postgres:14
+
+- name: "Deploy Storage Device Docker Container"
+  hosts: storage
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Storage Device"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:storage-device_latest"
+    - name: "Run Docker Container for Storage Device"
+      shell: |
+        docker run -d \
+          --name storage-device \
+          --restart always \
+          -p 5000:5000 \
+          -e DB_URL=postgresql://{{ DB_USER }}:{{ DB_PASSWORD }}@db1_int:5432/{{ DB_NAME }} \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:storage-device_latest
+
+- name: "Deploy Backend Carbs Docker Container"
+  hosts: carbs
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Backend Carbs"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-carbs_latest"
+    - name: "Run Docker Container for Backend Carbs"
+      shell: |
+        docker run -d \
+          --name be-carbs \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:be-carbs_latest
+
+- name: "Deploy Backend Dairy Docker Container"
+  hosts: dairy
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Backend Dairy"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-dairy_latest"
+    - name: "Run Docker Container for Backend Dairy"
+      shell: |
+        docker run -d \
+          --name be-dairy \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:be-dairy_latest
+
+- name: "Deploy Backend Meats Docker Container"
+  hosts: meats
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Backend Meats"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-meats_latest"
+    - name: "Run Docker Container for Backend Meats"
+      shell: |
+        docker run -d \
+          --name be-meats \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:be-meats_latest
+
+- name: "Deploy Backend Vegetables Docker Container"
+  hosts: vegetables
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Backend Vegetables"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-vegetables_latest"
+    - name: "Run Docker Container for Backend Vegetables"
+      shell: |
+        docker run -d \
+          --name be-vegetables \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:be-vegetables_latest
+
+- name: "Deploy Frontend Docker Container"
+  hosts: fe
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Pull Docker Image for Frontend"
+      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:fe_latest"
+    - name: "Run Docker Container for Frontend"
+      shell: |
+        docker run -d \
+          --name frontend \
+          --restart always \
+          -p 80:80 \
+          -e BE_CARBS_URL=http://carbs1_int:80 \
+          -e BE_DAIRY_URL=http://dairy1_int:80 \
+          -e BE_MEATS_URL=http://meats1_int:80 \
+          -e BE_VEGETABLES_URL=http://vegetables1_int:80 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          {{ CONTAINER_REGISTRY_PREFIX }}:fe_latest

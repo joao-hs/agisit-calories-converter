@@ -1,0 +1,10 @@
+---
+- hosts: targets
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Enable Docker
+      shell: systemctl enable docker
+    - name: Start Docker
+      shell: systemctl start docker
