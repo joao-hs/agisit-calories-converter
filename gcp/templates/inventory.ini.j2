@@ -1,0 +1,157 @@
+# file: inventory.ini
+
+# Front-ends
+%{ for instance in fe_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in fe_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Back-ends (Carbs)
+%{ for instance in carbs_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in carbs_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Back-ends (Dairy)
+%{ for instance in dairy_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in dairy_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Back-ends (Meats)
+%{ for instance in meats_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in meats_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Back-ends (Vegetables)
+%{ for instance in vegetables_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in vegetables_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Storage Device
+%{ for instance in storage_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in storage_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+# Database
+%{ for instance in db_ext ~}
+${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
+%{ endfor ~}
+%{ for instance in db_int ~}
+${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+%{ endfor ~}
+
+
+# The local deployment host VM
+[osmgmt]
+localhost           ansible_connection=local
+
+[fe]
+%{ for instance in fe_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[carbs]
+%{ for instance in carbs_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[dairy]
+%{ for instance in dairy_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[meats]
+%{ for instance in meats_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[vegetables]
+%{ for instance in vegetables_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[storage]
+%{ for instance in storage_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[db]
+%{ for instance in db_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[be]
+%{ for instance in carbs_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in dairy_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in meats_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in vegetables_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[targets]
+%{ for instance in fe_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in carbs_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in dairy_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in meats_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in vegetables_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in storage_ext ~}
+${ instance.id }
+%{ endfor ~}
+%{ for instance in db_ext ~}
+${ instance.id }
+%{ endfor ~}
+
+[internal_targets]
+%{ for instance in fe_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in carbs_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in dairy_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in meats_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in vegetables_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in storage_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in db_int ~}
+${ instance.id }_int
+%{ endfor ~}

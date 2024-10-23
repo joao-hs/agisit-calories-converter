@@ -2,6 +2,8 @@
 .env
 bin
 .vscode
+gcp/secrets/*
+!gcp/secrets/README.md
 k8s/secrets/*
 !k8s/secrets/README.md
 .vagrant
