@@ -1,10 +1,70 @@
 ---
-- hosts: targets
+- name: Provision RMCICD node
+  hosts: rmcicd
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
+    - name: Copy Ansible files (1/2)
+      copy:
+        src: "{{ playbook_dir }}/ansible.cfg"
+        dest: /home/rmcicd/ansible.cfg
+        mode: '0644'
+    - name: Copy Ansible files (2/2)
+      copy:
+        src: "{{ playbook_dir }}/inventory.ini"
+        dest: /home/rmcicd/inventory.ini
+        mode: '0644'
+    - name: Copy bootstrap script
+      copy:
+        src: "{{ playbook_dir }}/scripts/bootstrap-rmcicd.sh"
+        dest: /home/rmcicd/bootstrap.sh
+        mode: '0755'
+    - name: Create certs directory
+      file:
+        path: /home/rmcicd/certs
+        state: directory
+        mode: '0755'
+    - name: Copy CA's certificate
+      copy:
+        src: "{{ playbook_dir }}/secrets/ca.crt"
+        dest: /home/rmcicd/certs/ca.crt
+        mode: '0644'
+    - name: Copy CA's private key
+      copy:
+        src: "{{ playbook_dir }}/secrets/ca.key"
+        dest: /home/rmcicd/certs/ca.key
+        mode: '0600'
+    - name: Run bootstrap script
+      shell: |
+        echo "{{ registration_token }}" > /home/rmcicd/registration_token
+        export REGISTRATION_TOKEN=$(cat /home/rmcicd/registration_token)
+        /home/rmcicd/bootstrap.sh
+    - name: Put internal targets in /etc/hosts
+      shell: |
+        {% for host in groups['internal_targets'] %}
+        echo "{{ hostvars[host].ansible_host }} {{ host }}" >> /etc/hosts
+        {% endfor %}
+
+- name: Provision Docker nodes
+  hosts: targets
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  tasks:
+    - name: Allow Image Pull from RMCICD
+      shell: |
+        jq '. + { "insecure-registries": ["{{ rmcicd_int }}:5000"] }' /etc/docker/daemon.json > /etc/docker/daemon.tmp.json && mv /etc/docker/daemon.tmp.json /etc/docker/daemon.json
     - name: Enable Docker
       shell: systemctl enable docker
     - name: Start Docker
       shell: systemctl start docker
+    - name: Add rmcicd_int to hosts
+      shell: |
+        echo "{{ rmcicd_int }} rmcicd_int" >> /etc/hosts
+    - name: Restart Docker
+      shell: systemctl restart docker

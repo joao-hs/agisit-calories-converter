@@ -1,11 +1,15 @@
 # file: inventory.ini
 
+# RMCICD
+rmcicd ansible_host=${ rmcicd.ext_ip } ansible_user=rmcicd ansible_connection=ssh
+rmcicd_int ansible_host=${ rmcicd.int_ip } ansible_user=rmcicd ansible_connection=ssh
+
 # Front-ends
 %{ for instance in fe_ext ~}
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in fe_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Back-ends (Carbs)
@@ -13,7 +17,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in carbs_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Back-ends (Dairy)
@@ -21,7 +25,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in dairy_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Back-ends (Meats)
@@ -29,7 +33,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in meats_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Back-ends (Vegetables)
@@ -37,7 +41,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in vegetables_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Storage Device
@@ -45,7 +49,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in storage_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 # Database
@@ -53,7 +57,7 @@ ${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using invento
 ${ instance.id } ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 %{ for instance in db_int ~}
-${ instance.id }_int ansible_host=${ instance.ip } # internal ip - using inventory to store
+${ instance.id }_int ansible_host=${ instance.ip } ansible_user=ubuntu ansible_connection=ssh
 %{ endfor ~}
 
 
@@ -66,9 +70,19 @@ localhost           ansible_connection=local
 ${ instance.id }
 %{ endfor ~}
 
+[fe_int]
+%{ for instance in fe_int ~}
+${ instance.id }_int
+%{ endfor ~}
+
 [carbs]
 %{ for instance in carbs_ext ~}
 ${ instance.id }
+%{ endfor ~}
+
+[carbs_int]
+%{ for instance in carbs_int ~}
+${ instance.id }_int
 %{ endfor ~}
 
 [dairy]
@@ -76,9 +90,19 @@ ${ instance.id }
 ${ instance.id }
 %{ endfor ~}
 
+[dairy_int]
+%{ for instance in dairy_int ~}
+${ instance.id }_int
+%{ endfor ~}
+
 [meats]
 %{ for instance in meats_ext ~}
 ${ instance.id }
+%{ endfor ~}
+
+[meats_int]
+%{ for instance in meats_int ~}
+${ instance.id }_int
 %{ endfor ~}
 
 [vegetables]
@@ -86,14 +110,29 @@ ${ instance.id }
 ${ instance.id }
 %{ endfor ~}
 
+[vegetables_int]
+%{ for instance in vegetables_int ~}
+${ instance.id }_int
+%{ endfor ~}
+
 [storage]
 %{ for instance in storage_ext ~}
 ${ instance.id }
 %{ endfor ~}
 
+[storage_int]
+%{ for instance in storage_int ~}
+${ instance.id }_int
+%{ endfor ~}
+
 [db]
 %{ for instance in db_ext ~}
 ${ instance.id }
+%{ endfor ~}
+
+[db_int]
+%{ for instance in db_int ~}
+${ instance.id }_int
 %{ endfor ~}
 
 [be]
@@ -108,6 +147,20 @@ ${ instance.id }
 %{ endfor ~}
 %{ for instance in vegetables_ext ~}
 ${ instance.id }
+%{ endfor ~}
+
+[be_int]
+%{ for instance in carbs_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in dairy_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in meats_int ~}
+${ instance.id }_int
+%{ endfor ~}
+%{ for instance in vegetables_int ~}
+${ instance.id }_int
 %{ endfor ~}
 
 [targets]

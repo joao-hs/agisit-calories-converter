@@ -4,6 +4,8 @@
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Database"
       shell: "docker pull postgres:14"
@@ -26,9 +28,9 @@
         docker run -d \
           --name postgres-db \
           --restart always \
-          -e POSTGRES_USER={{ DB_USER }} \
-          -e POSTGRES_PASSWORD={{ DB_PASSWORD }} \
-          -e POSTGRES_DB={{ DB_NAME }} \
+          -e POSTGRES_USER={{ db_user }} \
+          -e POSTGRES_PASSWORD={{ db_password }} \
+          -e POSTGRES_DB={{ db_name }} \
           -p 5432:5432 \
           -v /home/ubuntu/db-data/:/var/lib/postgresql/data/ \
           -v /home/ubuntu/db/:/docker-entrypoint-initdb.d/ \
@@ -42,29 +44,33 @@
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Storage Device"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:storage-device_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest"
     - name: "Run Docker Container for Storage Device"
       shell: |
         docker run -d \
           --name storage-device \
           --restart always \
           -p 5000:5000 \
-          -e DB_URL=postgresql://{{ DB_USER }}:{{ DB_PASSWORD }}@db1_int:5432/{{ DB_NAME }} \
+          -e DB_URL=postgresql://{{ db_user }}:{{ db_password }}@db1_int:5432/{{ db_name }} \
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:storage-device_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest
 
 - name: "Deploy Backend Carbs Docker Container"
   hosts: carbs
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Backend Carbs"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-carbs_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest"
     - name: "Run Docker Container for Backend Carbs"
       shell: |
         docker run -d \
@@ -75,16 +81,18 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:be-carbs_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest
 
 - name: "Deploy Backend Dairy Docker Container"
   hosts: dairy
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Backend Dairy"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-dairy_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest"
     - name: "Run Docker Container for Backend Dairy"
       shell: |
         docker run -d \
@@ -95,16 +103,18 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:be-dairy_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest
 
 - name: "Deploy Backend Meats Docker Container"
   hosts: meats
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Backend Meats"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-meats_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest"
     - name: "Run Docker Container for Backend Meats"
       shell: |
         docker run -d \
@@ -115,16 +125,18 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:be-meats_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest
 
 - name: "Deploy Backend Vegetables Docker Container"
   hosts: vegetables
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Backend Vegetables"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:be-vegetables_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest"
     - name: "Run Docker Container for Backend Vegetables"
       shell: |
         docker run -d \
@@ -135,16 +147,18 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:be-vegetables_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest
 
 - name: "Deploy Frontend Docker Container"
   hosts: fe
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
   tasks:
     - name: "Pull Docker Image for Frontend"
-      shell: "docker pull {{ CONTAINER_REGISTRY_PREFIX }}:fe_latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_fe:latest"
     - name: "Run Docker Container for Frontend"
       shell: |
         docker run -d \
@@ -158,4 +172,4 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ CONTAINER_REGISTRY_PREFIX }}:fe_latest
+          {{ rmcicd_int }}:5000/agisit24-g10_fe:latest

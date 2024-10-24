@@ -57,5 +57,7 @@ sudo apt-get -y install google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin
 # Install Kubernetes Controller
 sudo apt-get -y install kubectl
 
+sudo apt-get -y install jq
+
 # Clean up cached packages
 sudo apt-get clean all

@@ -21,7 +21,7 @@ variable "GCP_MACHINE_TYPE" {
 # For prices of your deployment check:
 # Compute Engine dashboard -> VM instances -> Zone
 variable "GCP_ZONE" {
-  default = "europe-west1-c"
+  default = "europe-central2-a"
 }
 
 # Minimum required
@@ -59,8 +59,4 @@ variable "STORAGE_DEVICE_COUNT" {
 
 variable "DB_COUNT" {
   default = 1
-}
-
-variable "CONTAINER_REGISTRY_PREFIX" {
-  description = "Prefix for the container registry"
 }

@@ -2,6 +2,18 @@
 # To output variables, follow pattern:
 # value = TYPE.NAME.ATTR
 
+output "rmcicd_ext_IP" {
+  value = google_compute_instance.rmcicd.network_interface.0.access_config.0.nat_ip
+}
+
+output "rmcicd_int_IP" {
+  value = google_compute_instance.rmcicd.network_interface.0.network_ip
+}
+
+output "rmcicd_ssh" {
+  value = google_compute_instance.rmcicd.self_link
+}
+
 output "fe_ext_IPs" {
   value = formatlist("%s = %s", google_compute_instance.fe[*].name, google_compute_instance.fe[*].network_interface.0.access_config.0.nat_ip)
 }
@@ -126,6 +138,11 @@ locals {
   db_int_inventory         = zipmap(local.db_ids, local.db_int_ips)
 
   inventory_content = templatefile("${path.module}/templates/inventory.ini.j2", {
+    rmcicd = {
+      ext_ip = google_compute_instance.rmcicd.network_interface.0.access_config.0.nat_ip
+      int_ip = google_compute_instance.rmcicd.network_interface.0.network_ip
+    }
+
     fe_ext = [for instance_id, ext_ip in local.fe_ext_inventory : {
       id = instance_id
       ip = ext_ip
@@ -196,10 +213,19 @@ locals {
       ip = int_ip
     }]
   })
+
+  vars_content = templatefile("${path.module}/secrets/vars.yml.j2", {
+    rmcicd_int = google_compute_instance.rmcicd.network_interface.0.network_ip
+  })
 }
 
 # Write to inventory file
 resource "local_file" "ansible_inventory" {
   content  = local.inventory_content
   filename = "${path.module}/inventory.ini"
+}
+
+resource "local_file" "ansible_vars" {
+  content = local.vars_content
+  filename = "${path.module}/vars.yml"
 }

@@ -202,3 +202,28 @@ resource "google_compute_instance" "db" {
   }
   tags = ["db"]
 }
+
+###########  (R)egistry (M)onitor (CICD) runner   #############
+resource "google_compute_instance" "rmcicd" {
+  name = "rmcicd"
+  machine_type = var.GCP_MACHINE_TYPE
+  zone = var.GCP_ZONE
+
+  boot_disk {
+    initialize_params {
+      image = "debian-12-bookworm-v20241009"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+    }
+  }
+
+  metadata = {
+    ssh-keys = "rmcicd:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+  }
+
+  tags = ["rmcicd"]
+}
