@@ -82,4 +82,7 @@ EOF
 openssl req -new -newkey rsa:4096 -out /home/rmcicd/certs/rmcicd.csr -keyout /home/rmcicd/certs/rmcicd.pem -nodes -config /home/rmcicd/certs/san.cnf
 openssl x509 -req -in /home/rmcicd/certs/rmcicd.csr -CA /home/rmcicd/certs/ca.crt -CAkey /home/rmcicd/certs/ca.key -CAcreateserial -out /home/rmcicd/certs/rmcicd.crt -days 3650 -sha256
 
+# Comment .bash_logout. Requirement for gitlab-runner (https://docs.gitlab.com/runner/shells/index.html#shell-profile-loading)
+sed -i 's/^/#/' /home/gitlab-runner/.bash_logout
+
 # openssl req -x509 -newkey rsa:4096 -keyout /home/rmcicd/certs/key.pem -out /home/rmcicd/certs/cert.pem -sha256 -days 3650 -nodes -config /home/rmcicd/san.cnf
