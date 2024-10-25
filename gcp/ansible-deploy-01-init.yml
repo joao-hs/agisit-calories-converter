@@ -22,6 +22,21 @@
         src: "{{ playbook_dir }}/scripts/bootstrap-rmcicd.sh"
         dest: /home/rmcicd/bootstrap.sh
         mode: '0755'
+    - name: Create resourses directory
+      file:
+        path: /home/rmcicd/resources
+        state: directory
+        mode: '0755'
+    - name: Copy Prometheus
+      copy:
+        src: "{{ playbook_dir }}/resourses/prometheus-2.30.0.linux-amd64/prometheus"
+        dest: /home/rmcicd/resources/prometheus
+        mode: '0755'
+    - name: Copy Prometheus configuration
+      copy:
+        src: "{{ playbook_dir }}/config-files/prometheus.yml"
+        dest: /home/rmcicd/resources/prometheus.yml
+        mode: '0644'
     - name: Create certs directory
       file:
         path: /home/rmcicd/certs

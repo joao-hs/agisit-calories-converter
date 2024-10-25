@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  -job_name: "stats"
+  static_configs:
+      - targets: 
+        - 'fe1_int:9100'
+        - 'carbs1_int:9100'
+        - 'dairy1_int:9100'
+        - 'meats1_int:9100'
+        - 'vegetables1_int:9100'
+        - 'storage1_int:9100'
+        - 'db1_int:9100'

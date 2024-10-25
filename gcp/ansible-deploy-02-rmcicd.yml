@@ -95,3 +95,14 @@
         cd /home/ubuntu/resources
         ./node_exporter --collector.disable-defaults --collector.cpu --collector.meminfo --colletor.netdev
 
+- name: "Deploy Prometheus on RMCICD"
+  hosts: rmcicd
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Deploy Prometheus"
+      shell: |
+        cd /home/rmcicd/resources
+        ./prometheus --config.file=prometheus.yml
+
