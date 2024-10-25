@@ -81,6 +81,6 @@ debug:
         - |
             echo "Branch: $CI_COMMIT_BRANCH"
             echo "Files changed in this commit: ($CI_COMMIT_BEFORE_SHA -> $CI_COMMIT_SHA)"
-            git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep 'services/'
+            git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep 'services/' || echo "No changes in services/"
     rules:
         - when: always
