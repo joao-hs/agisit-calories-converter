@@ -1,0 +1,213 @@
+---
+- name: "(Storage Device) Hot switch Docker images"
+  hosts: storage_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    storage_device_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ storage_device_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ storage_device_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop storage-device
+        docker rm storage-device
+        docker rmi storage-device:latest
+        docker tag {{ storage_device_remote_image }} storage-device:latest
+        docker run -d \
+          --name storage-device \
+          --restart always \
+          -p 5000:5000 \
+          -e DB_URL=postgresql://{{ db_user }}:{{ db_password }}@db1_int:5432/{{ db_name }} \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          storage-device:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ storage_device_remote_image }}
+
+- name: "(Back-end Carbs) Hot switch Docker images"
+  hosts: carbs_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_carbs_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ be_carbs_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ be_carbs_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop be-carbs
+        docker rm be-carbs
+        docker rmi be-carbs:latest
+        docker tag {{ be_carbs_remote_image }} be-carbs:latest
+        docker run -d \
+          --name be-carbs \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          be-carbs:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ be_carbs_remote_image }}
+
+- name: "(Back-end Dairy) Hot switch Docker images"
+  hosts: dairy_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_dairy_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ be_dairy_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ be_dairy_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop be-dairy
+        docker rm be-dairy
+        docker rmi be-dairy:latest
+        docker tag {{ be_dairy_remote_image }} be-dairy:latest
+        docker run -d \
+          --name be-dairy \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          be-dairy:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ be_dairy_remote_image }}
+
+- name: "(Back-end Meats) Hot switch Docker images"
+  hosts: meats_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_meats_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ be_meats_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ be_meats_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop be-meats
+        docker rm be-meats
+        docker rmi be-meats:latest
+        docker tag {{ be_meats_remote_image }} be-meats:latest
+        docker run -d \
+          --name be-meats \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          be-meats:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ be_meats_remote_image }}
+
+- name: "(Back-end Vegetables) Hot switch Docker images"
+  hosts: vegetables_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_vegetables_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ be_vegetables_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ be_vegetables_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop be-vegetables
+        docker rm be-vegetables
+        docker rmi be-vegetables:latest
+        docker tag {{ be_vegetables_remote_image }} be-vegetables:latest
+        docker run -d \
+          --name be-vegetables \
+          --restart always \
+          -p 80:80 \
+          -e STORAGE_DEVICE_URL=http://storage1_int:5000 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          be-vegetables:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ be_vegetables_remote_image }}
+
+- name: "(Front-end) Hot switch Docker images"
+  hosts: fe_int
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - "{{ playbook_dir }}/vars.yml"
+  vars:
+    fe_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_fe:latest"
+  tasks:
+    - name: "Pull and switch if needed"
+      shell: |
+        docker --config /home/ubuntu/.docker pull {{ fe_remote_image }}
+        remote_digest=$(docker inspect --format {{'{{.Id}}'}} {{ fe_remote_image }} | sed 's/sha256://')
+        local_digest=$(cat /home/ubuntu/running-image.id)
+        if [ ! "$remote_digest" != "$local_digest" ]; then
+          echo "No need to switch"
+          exit 0
+        fi
+        docker stop fe
+        docker rm fe
+        docker rmi fe:latest
+        docker tag {{ fe_remote_image }} fe:latest
+        docker run -d \
+          --name frontend \
+          --restart always \
+          -p 80:80 \
+          -e BE_CARBS_URL=http://carbs1_int:80 \
+          -e BE_DAIRY_URL=http://dairy1_int:80 \
+          -e BE_MEATS_URL=http://meats1_int:80 \
+          -e BE_VEGETABLES_URL=http://vegetables1_int:80 \
+          {% for host in groups['internal_targets'] %}
+          --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
+          {% endfor %}
+          fe:latest
+        echo $remote_digest > /home/ubuntu/running-image.id
+        docker rmi {{ fe_remote_image }}

@@ -1,0 +1,63 @@
+stages:
+    - build
+    - deploy
+
+variables:
+    DOCKER_REGISTRY: "localhost:5000"
+    GITLAB_RUNNER_HOME: "/home/gitlab-runner"
+
+build:
+    tags:
+        - cicd
+    stage: build
+    script:
+        - |
+            echo "Docker Compose build..."
+            docker compose -f docker-compose.yml build
+        - |
+            echo "Docker Login..."
+            docker login $DOCKER_REGISTRY -u admin -p admin
+        - |
+            echo "Push new images..."
+            docker tag agisit24-g10-fe $DOCKER_REGISTRY/agisit24-g10_fe:latest
+            docker tag agisit24-g10-be_carbs $DOCKER_REGISTRY/agisit24-g10_be-carbs:latest
+            docker tag agisit24-g10-be_dairy $DOCKER_REGISTRY/agisit24-g10_be-dairy:latest
+            docker tag agisit24-g10-be_meats $DOCKER_REGISTRY/agisit24-g10_be-meats:latest
+            docker tag agisit24-g10-be_vegetables $DOCKER_REGISTRY/agisit24-g10_be-vegetables:latest
+            docker tag agisit24-g10-storage_device $DOCKER_REGISTRY/agisit24-g10_storage-device:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_fe:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_be-carbs:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_be-dairy:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_be-meats:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_be-vegetables:latest
+            docker push $DOCKER_REGISTRY/agisit24-g10_storage-device:latest
+        - |
+            echo "Remove local images..."
+            docker rmi agisit24-g10-fe:latest
+            docker rmi agisit24-g10-be_carbs:latest
+            docker rmi agisit24-g10-be_dairy:latest
+            docker rmi agisit24-g10-be_meats:latest
+            docker rmi agisit24-g10-be_vegetables:latest
+            docker rmi agisit24-g10-storage_device:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_fe:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_be-carbs:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_be-dairy:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_be-meats:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_be-vegetables:latest
+            docker rmi $DOCKER_REGISTRY/agisit24-g10_storage-device:latest
+    rules:
+        - if: $CI_COMMIT_BRANCH == "master"
+          changes:
+              - services/**
+
+deploy:
+    tags:
+        - cicd
+    stage: deploy
+    script:
+        - |
+            echo "Hot switch containers..."
+            cd $GITLAB_RUNNER_HOME
+            ansible-playbook ansible-deploy.yml
+    needs:
+        - build
