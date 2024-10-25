@@ -68,10 +68,13 @@ deploy:
               - services/**
 
 debug:
-  script:
-    - | 
-        echo "Branch: $CI_COMMIT_BRANCH"
-        echo "Files changed in this commit:"
-        git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep 'services/'
-  rules:
-    - when: always
+    tags:
+        - cicd
+    stage: debug
+    script:
+        - |
+            echo "Branch: $CI_COMMIT_BRANCH"
+            echo "Files changed in this commit:"
+            git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep 'services/'
+    rules:
+        - when: always
