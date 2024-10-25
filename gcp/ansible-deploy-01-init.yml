@@ -56,6 +56,16 @@
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
   tasks:
+    - name: Create resourses directory
+      file:
+        path: /home/ubuntu/resources
+        state: directory
+        mode: '0755'
+    - name: Copy Node Exporter
+      copy:
+        src: "{{ playbook_dir }}/resourses/node_exporter-1.8.2.linux-amd64/node_exporter"
+        dest: /home/ubuntu/resources/node_exporter
+        mode: '0755'
     - name: Allow Image Pull from RMCICD
       shell: |
         jq '. + { "insecure-registries": ["{{ rmcicd_int }}:5000"] }' /etc/docker/daemon.json > /etc/docker/daemon.tmp.json && mv /etc/docker/daemon.tmp.json /etc/docker/daemon.json

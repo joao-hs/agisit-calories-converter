@@ -83,3 +83,15 @@
     - name: "Docker Login"
       shell: |
         docker --config /home/ubuntu/.docker login {{ rmcicd_int }}:5000 -u admin -p admin
+
+- name: "Deploy Node Exporter on Targets"
+  hosts: targets
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Deploy Node Exporter"
+      shell: |
+        cd /home/ubuntu/resources
+        ./node_exporter --collector.disable-defaults --collector.cpu --collector.meminfo --colletor.netdev
+
