@@ -5,48 +5,50 @@ scrape_configs:
     - job_name: "stats"
       static_configs:
           - targets:
-              ${% for instance_int in fe_int %}
-              - "{{ instance_int }}:9100" 
-              {% endfor %}
+%{ for instance_int in fe_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "frontend"
+
           - targets:
-              ${% for instance_int in carbs_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
+%{ for instance_int in carbs_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "backend-carbs"
 
           - targets:
-              ${% for instance_int in dairy_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
+%{ for instance_int in dairy_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "backend-dairy"
 
           - targets:
-              ${% for instance_int in meats_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
+%{ for instance_int in meats_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "backend-meats"
 
           - targets:
-              ${% for instance_int in vegetables_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
+%{ for instance_int in vegetables_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "backend-vegetables"
 
           - targets:
-              ${% for instance_int in storage_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
-            instance: "storage-device"
+%{ for instance_int in storage_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
+            labels:
+              instance: "storage-device"
 
           - targets:
-              ${% for instance_int in db_int %}
-              - "{{ instance_int }}:9100"
-              {% endfor %}
+%{ for instance_int in db_int ~}
+              - "${ instance_int }:9100"
+%{ endfor ~}
             labels:
               instance: "database"

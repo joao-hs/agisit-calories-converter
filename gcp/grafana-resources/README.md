@@ -1,0 +1,2 @@
+- directory inspired by https://github.com/cirocosta/sample-grafana/
+- dashboard made by us

@@ -16,4 +16,3 @@ terraform.tfstate.backup
 inventory.ini
 vars.yml
 generated
-gcp/resources/*

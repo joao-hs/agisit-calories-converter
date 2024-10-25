@@ -129,13 +129,18 @@
   become_user: root
   become_method: sudo
   tasks:
+    - name: "Copy grafana resources"
+      copy:
+        src: "{{ playbook_dir }}/grafana-resources"
+        dest: /home/rmcicd
     - name: "Deploy Grafana"
       shell: |
-        docker volume create grafana-storage
         docker run -d \
           --name grafana \
           --restart=always \
-          -v grafana-storage:/var/lib/grafana \
+          -v /home/rmcicd/grafana-resources/provisioning:/etc/grafana/provisioning \
+          -v /home/rmcicd/grafana-resources/dashboards:/var/lib/grafana/dashboards \
+          -v /home/rmcicd/grafana-resources/config.ini:/etc/grafana/config.ini \
           -p 3000:3000 \
           grafana/grafana
     - name: Setup the network and connect
