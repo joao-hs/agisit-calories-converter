@@ -106,3 +106,13 @@
         cd /home/rmcicd/resources
         ./prometheus --config.file=prometheus.yml
 
+- name: "Deploy Grafana on RMCICD"
+  hosts: rmcicd
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Deploy Grafana"
+      shell: |
+        cd /home/rmcicd/resources/grafana-v11.3.0/bin
+        ./grafana-server

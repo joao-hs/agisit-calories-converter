@@ -37,6 +37,10 @@
         src: "{{ playbook_dir }}/config-files/prometheus.yml"
         dest: /home/rmcicd/resources/prometheus.yml
         mode: '0644'
+    - name: Copy Grafana
+      copy:
+        src: "{{ playbook_dir }}/resourses/grafana-v11.3.0"
+        dest: /home/rmcicd/resources
     - name: Create certs directory
       file:
         path: /home/rmcicd/certs
