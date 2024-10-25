@@ -217,6 +217,16 @@ locals {
   vars_content = templatefile("${path.module}/secrets/vars.yml.j2", {
     rmcicd_int = google_compute_instance.rmcicd.network_interface.0.network_ip
   })
+
+  prometheus_config_content = templatefile("${path.module}/config-files/prometheus.yml.j2", {
+    fe_int = local.fe_int_ips
+    carbs_int = local.carbs_int_ips
+    dairy_int = local.dairy_int_ips
+    meats_int = local.meats_int_ips
+    vegetables_int = local.vegetables_int_ips
+    storage_int = local.storage_int_ips
+    db_int = local.db_int_ips
+  })
 }
 
 # Write to inventory file
@@ -228,4 +238,9 @@ resource "local_file" "ansible_inventory" {
 resource "local_file" "ansible_vars" {
   content = local.vars_content
   filename = "${path.module}/vars.yml"
+}
+
+resource "local_file" "prometheus_config" {
+  content = local.prometheus_config_content
+  filename = "${path.module}/config-files/generated/prometheus.yml"
 }

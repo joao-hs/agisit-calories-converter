@@ -28,7 +28,9 @@ resource "google_compute_instance" "fe" {
   can_ip_forward = true
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["fe"]
 }
@@ -57,7 +59,9 @@ resource "google_compute_instance" "carbs" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["carbs"]
 }
@@ -85,7 +89,9 @@ resource "google_compute_instance" "dairy" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["dairy"]
 }
@@ -113,7 +119,9 @@ resource "google_compute_instance" "meats" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["meats"]
 }
@@ -142,7 +150,9 @@ resource "google_compute_instance" "vegetables" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["vegetables"]
 }
@@ -170,7 +180,9 @@ resource "google_compute_instance" "storage" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["storage"]
 }
@@ -198,7 +210,9 @@ resource "google_compute_instance" "db" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}"
+    ssh-keys = <<EOF
+      ubuntu:${file("/home/vagrant/.ssh/id_rsa.pub")}
+    EOF
   }
   tags = ["db"]
 }

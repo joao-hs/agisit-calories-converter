@@ -46,9 +46,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    storage_device_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest"
   tasks:
     - name: "Pull Docker Image for Storage Device"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ storage_device_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ storage_device_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ storage_device_remote_image }} storage-device:latest
+        docker rmi {{ storage_device_remote_image }}
     - name: "Run Docker Container for Storage Device"
       shell: |
         docker run -d \
@@ -59,7 +66,7 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_storage-device:latest
+          storage-device:latest
 
 - name: "Deploy Backend Carbs Docker Container"
   hosts: carbs
@@ -68,9 +75,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_carbs_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest"
   tasks:
     - name: "Pull Docker Image for Backend Carbs"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ be_carbs_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ be_carbs_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ be_carbs_remote_image }} be-carbs:latest
+        docker rmi {{ be_carbs_remote_image }}
     - name: "Run Docker Container for Backend Carbs"
       shell: |
         docker run -d \
@@ -81,7 +95,7 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_be-carbs:latest
+          be-carbs:latest
 
 - name: "Deploy Backend Dairy Docker Container"
   hosts: dairy
@@ -90,9 +104,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_dairy_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest"
   tasks:
     - name: "Pull Docker Image for Backend Dairy"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ be_dairy_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ be_dairy_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ be_dairy_remote_image }} be-dairy:latest
+        docker rmi {{ be_dairy_remote_image }}
     - name: "Run Docker Container for Backend Dairy"
       shell: |
         docker run -d \
@@ -103,7 +124,7 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_be-dairy:latest
+          be-dairy:latest
 
 - name: "Deploy Backend Meats Docker Container"
   hosts: meats
@@ -112,9 +133,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_meats_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest"
   tasks:
     - name: "Pull Docker Image for Backend Meats"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ be_meats_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ be_meats_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ be_meats_remote_image }} be-meats:latest
+        docker rmi {{ be_meats_remote_image }}
     - name: "Run Docker Container for Backend Meats"
       shell: |
         docker run -d \
@@ -125,7 +153,7 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_be-meats:latest
+          be-meats:latest
 
 - name: "Deploy Backend Vegetables Docker Container"
   hosts: vegetables
@@ -134,9 +162,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    be_vegetables_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest"
   tasks:
     - name: "Pull Docker Image for Backend Vegetables"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ be_vegetables_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ be_vegetables_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ be_vegetables_remote_image }} be-vegetables:latest
+        docker rmi {{ be_vegetables_remote_image }}
     - name: "Run Docker Container for Backend Vegetables"
       shell: |
         docker run -d \
@@ -147,7 +182,7 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_be-vegetables:latest
+          be-vegetables:latest
 
 - name: "Deploy Frontend Docker Container"
   hosts: fe
@@ -156,9 +191,16 @@
   become_method: sudo
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
+  vars:
+    fe_remote_image: "{{ rmcicd_int }}:5000/agisit24-g10_fe:latest"
   tasks:
     - name: "Pull Docker Image for Frontend"
-      shell: "docker --config /home/ubuntu/.docker pull {{ rmcicd_int }}:5000/agisit24-g10_fe:latest"
+      shell: "docker --config /home/ubuntu/.docker pull {{ fe_remote_image }}"
+    - name: "Docker Image Processing"
+      shell: |
+        docker inspect --format {{'{{.Id}}'}} {{ fe_remote_image }} > /home/ubuntu/running-image.id
+        docker tag {{ fe_remote_image }} fe:latest
+        docker rmi {{ fe_remote_image }}
     - name: "Run Docker Container for Frontend"
       shell: |
         docker run -d \
@@ -172,4 +214,4 @@
           {% for host in groups['internal_targets'] %}
           --add-host={{ hostvars[host]['inventory_hostname'] }}:{{ hostvars[host].ansible_host }} \
           {% endfor %}
-          {{ rmcicd_int }}:5000/agisit24-g10_fe:latest
+          fe:latest

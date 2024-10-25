@@ -12,6 +12,7 @@ terraform init
 ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -N ""
 
 terraform apply --auto-approve
+sleep 15
 
 # CA private key and self-signed certificate
 openssl genrsa -out secrets/ca.key 2048
@@ -19,18 +20,6 @@ openssl req -x509 -new -nodes -key secrets/ca.key -sha256 -days 3650 -out secret
 
 mkdir -p resources
 
-wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz -O resources/node_exporter-1.8.2.linux-amd64.tar.gz
-tar xvfz resources/node_exporter-1.8.2.linux-amd64.tar.gz -C resources/
-rm resources/node_exporter-1.8.2.linux-amd64.tar.gz
-
-wget https://github.com/prometheus/prometheus/releases/download/v2.55.0/prometheus-2.55.0.linux-amd64.tar.gz -O resources/prometheus-2.55.0.linux-amd64.tar.gz
-tar xvfz resources/prometheus-2.55.0.linux-amd64.tar.gz -C resources/
-rm resources/prometheus-2.55.0.linux-amd64.tar.gz
-rm -r resources/prometheus-2.55.0.linux-amd64/console* resources/prometheus-2.55.0.linux-amd64/promtool
-
-wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.3.0.linux-amd64.tar.gz -O resources/grafana-enterprise-11.3.0.linux-amd64.tar.gz
-tar xvfz resources/grafana-enterprise-11.3.0.linux-amd64.tar.gz -C resources/
-rm resources/grafana-enterprise-11.3.0.linux-amd64.tar.gz
 
 ansible-playbook ansible-deploy-00-gcp-configure-nodes.yml
 

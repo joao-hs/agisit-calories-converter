@@ -7,40 +7,40 @@
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
   tasks:
-    - name: Copy Ansible files (1/2)
+    - name: Copy Ansible files (1/4)
       copy:
         src: "{{ playbook_dir }}/ansible.cfg"
         dest: /home/rmcicd/ansible.cfg
         mode: '0644'
-    - name: Copy Ansible files (2/2)
+    - name: Copy Ansible files (2/4)
       copy:
         src: "{{ playbook_dir }}/inventory.ini"
         dest: /home/rmcicd/inventory.ini
+        mode: '0644'
+    - name: Copy Ansible files (3/4)
+      copy:
+        src: "{{ playbook_dir }}/cicd-playbooks"
+        dest: /home/rmcicd
+    - name: Copy Ansible files (4/4)
+      copy:
+        src: "{{ playbook_dir }}/vars.yml"
+        dest: /home/rmcicd/vars.yml
         mode: '0644'
     - name: Copy bootstrap script
       copy:
         src: "{{ playbook_dir }}/scripts/bootstrap-rmcicd.sh"
         dest: /home/rmcicd/bootstrap.sh
         mode: '0755'
-    - name: Create resourses directory
+    - name: Create resources directory
       file:
         path: /home/rmcicd/resources
         state: directory
         mode: '0755'
-    - name: Copy Prometheus
-      copy:
-        src: "{{ playbook_dir }}/resourses/prometheus-2.30.0.linux-amd64/prometheus"
-        dest: /home/rmcicd/resources/prometheus
-        mode: '0755'
     - name: Copy Prometheus configuration
       copy:
-        src: "{{ playbook_dir }}/config-files/prometheus.yml"
+        src: "{{ playbook_dir }}/config-files/generated/prometheus.yml"
         dest: /home/rmcicd/resources/prometheus.yml
         mode: '0644'
-    - name: Copy Grafana
-      copy:
-        src: "{{ playbook_dir }}/resourses/grafana-v11.3.0"
-        dest: /home/rmcicd/resources
     - name: Create certs directory
       file:
         path: /home/rmcicd/certs
@@ -61,6 +61,19 @@
         echo "{{ registration_token }}" > /home/rmcicd/registration_token
         export REGISTRATION_TOKEN=$(cat /home/rmcicd/registration_token)
         /home/rmcicd/bootstrap.sh
+    - name: Copy SSH private key
+      copy:
+        src: /home/vagrant/.ssh/id_rsa
+        dest: /home/gitlab-runner/.ssh/id_rsa
+        mode: '0600'
+    - name: Copy SSH public key
+      copy:
+        src: /home/vagrant/.ssh/id_rsa.pub
+        dest: /home/gitlab-runner/.ssh/
+        mode: '0644'
+    - name: "Change ownership of gitlab-runner's home directory"
+      shell: |
+        chown -R gitlab-runner:gitlab-runner /home/gitlab-runner/
     - name: Put internal targets in /etc/hosts
       shell: |
         {% for host in groups['internal_targets'] %}
@@ -75,16 +88,6 @@
   vars_files:
     - "{{ playbook_dir }}/vars.yml"
   tasks:
-    - name: Create resourses directory
-      file:
-        path: /home/ubuntu/resources
-        state: directory
-        mode: '0755'
-    - name: Copy Node Exporter
-      copy:
-        src: "{{ playbook_dir }}/resourses/node_exporter-1.8.2.linux-amd64/node_exporter"
-        dest: /home/ubuntu/resources/node_exporter
-        mode: '0755'
     - name: Allow Image Pull from RMCICD
       shell: |
         jq '. + { "insecure-registries": ["{{ rmcicd_int }}:5000"] }' /etc/docker/daemon.json > /etc/docker/daemon.tmp.json && mv /etc/docker/daemon.tmp.json /etc/docker/daemon.json

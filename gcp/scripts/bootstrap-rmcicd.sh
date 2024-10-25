@@ -33,14 +33,13 @@ gitlab-runner start
 gitlab-runner register  --url https://gitlab.rnl.tecnico.ulisboa.pt --executor shell --token $REGISTRATION_TOKEN --non-interactive
 gitlab-runner restart
 
-cp /home/rmcicd/ansible.cfg /home/gitlab-runner/ansible.cfg
 cp /home/rmcicd/inventory.ini /home/gitlab-runner/inventory.ini
+cp /home/rmcicd/vars.yml /home/gitlab-runner/vars.yml
+cp /home/rmcicd/cicd-playbooks/* /home/gitlab-runner/
 
 mkdir -p /home/gitlab-runner/.ssh
-ssh-keygen -t rsa -b 2048 -f /home/gitlab-runner/.ssh/id_rsa_gl -N ""
 
-sed -i 's/vagrant/gitlab-runner/g' /home/gitlab-runner/inventory.ini
-sed -i 's/id_rsa/id_rsa_gl/g' /home/gitlab-runner/inventory.ini
+sed 's/vagrant/gitlab-runner/g' /home/rmcicd/ansible.cfg > /home/gitlab-runner/ansible.cfg
 
 mkdir -p /home/rmcicd/auth
 # this registry is not exposed to the internet, so we can use (and expose) a simple password

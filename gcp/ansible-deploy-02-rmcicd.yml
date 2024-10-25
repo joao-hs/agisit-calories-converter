@@ -66,6 +66,9 @@
         docker rmi localhost:5000/agisit24-g10_be-meats:latest
         docker rmi localhost:5000/agisit24-g10_be-vegetables:latest
         docker rmi localhost:5000/agisit24-g10_storage-device:latest
+    - name: Remove source code
+      shell: |
+        rm -rf /home/rmcicd/agisit24-g10
 
 - name: "Docker Login on Targets"
   hosts: targets
@@ -92,8 +95,16 @@
   tasks:
     - name: "Deploy Node Exporter"
       shell: |
-        cd /home/ubuntu/resources
-        ./node_exporter --collector.disable-defaults --collector.cpu --collector.meminfo --colletor.netdev
+        docker run -d \
+          --name node-exporter \
+          --restart=always \
+          -v "/:/host:ro,rslave" \
+          -p 9100:9100 \
+          quay.io/prometheus/node-exporter:latest \
+          --path.rootfs /host \
+          --collector.disable-defaults \
+          --collector.cpu \
+          --collector.meminfo
 
 - name: "Deploy Prometheus on RMCICD"
   hosts: rmcicd
@@ -103,8 +114,14 @@
   tasks:
     - name: "Deploy Prometheus"
       shell: |
-        cd /home/rmcicd/resources
-        ./prometheus --config.file=prometheus.yml
+        docker volume create prometheus-storage
+        docker run -d \
+          --name prometheus \
+          --restart=always \
+          -v prometheus-storage:/prometheus \
+          -v /home/rmcicd/resources/prometheus.yml:/etc/prometheus/prometheus.yml \
+          -p 9090:9090 \
+          prom/prometheus
 
 - name: "Deploy Grafana on RMCICD"
   hosts: rmcicd
@@ -114,5 +131,15 @@
   tasks:
     - name: "Deploy Grafana"
       shell: |
-        cd /home/rmcicd/resources/grafana-v11.3.0/bin
-        ./grafana-server
+        docker volume create grafana-storage
+        docker run -d \
+          --name grafana \
+          --restart=always \
+          -v grafana-storage:/var/lib/grafana \
+          -p 3000:3000 \
+          grafana/grafana
+    - name: Setup the network and connect
+      shell: |
+        docker network create --subnet 172.18.0.0/16 monitoring
+        docker network connect --ip 172.18.0.2 monitoring prometheus
+        docker network connect --ip 172.18.0.3 monitoring grafana
