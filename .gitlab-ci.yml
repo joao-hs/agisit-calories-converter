@@ -1,4 +1,5 @@
 stages:
+    - debug
     - build
     - deploy
 
@@ -65,3 +66,12 @@ deploy:
         - if: $CI_COMMIT_BRANCH == "master"
           changes:
               - services/**
+
+debug:
+  script:
+    - | 
+        echo "Branch: $CI_COMMIT_BRANCH"
+        echo "Files changed in this commit:"
+        git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep 'services/'
+  rules:
+    - when: always
