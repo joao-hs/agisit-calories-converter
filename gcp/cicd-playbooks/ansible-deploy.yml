@@ -193,8 +193,8 @@
           echo "No need to switch"
           exit 0
         fi
-        docker stop fe
-        docker rm fe
+        docker stop frontend
+        docker rm frontend
         docker rmi fe:latest
         docker tag {{ fe_remote_image }} fe:latest
         docker run -d \
